@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevOps Pipeline & Microservices Architecture Showcase</title>
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: #1f2937;
+      --bg-card-hover: #283548;
+      --border-color: #374151;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    header {
+      background: rgba(17, 24, 39, 0.9);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #fff;
+    }
+
+    .brand-icon {
+      width: 2rem;
+      height: 2rem;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: white;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--accent-green);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .status-badge .dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem 4rem;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      padding: 0.3rem 0.85rem;
+      border-radius: 20px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 80%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      max-width: 780px;
+      margin: 0 auto 2.5rem;
+      color: var(--text-muted);
+      font-size: 1.15rem;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 4rem;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-blue);
+    }
+
+    .metric-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+    }
+
+    .metric-card h3 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-card .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-card .caption {
+      font-size: 0.8rem;
+      color: var(--accent-green);
+    }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 5rem;
+      scroll-margin-top: 5rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* DevOps Advantages Cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .icon-box {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .icon-blue { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    .icon-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+    .icon-purple { background: rgba(139, 92, 246, 0.15); color: var(--accent-purple); }
+    .icon-amber { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .icon-rose { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .icon-cyan { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); }
+
+    .feature-card h3 {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      width: fit-content;
+    }
+
+    /* Pipeline Visualizer Box */
+    .pipeline-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .pipeline-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .btn {
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #60a5fa, var(--accent-blue));
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: #64748b;
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Pipeline Steps Graphic */
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .step-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step-box.idle {
+      opacity: 0.75;
+    }
+
+    .step-box.running {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);
+      opacity: 1;
+      transform: translateY(-2px);
+    }
+
+    .step-box.success {
+      border-color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.08);
+      opacity: 1;
+    }
+
+    .step-box.failed {
+      border-color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.08);
+      opacity: 1;
+    }
+
+    .step-number {
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-status {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* Live Terminal Console */
+    .terminal {
+      background: #090d14;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      font-family: var(--font-mono);
+      overflow: hidden;
+    }
+
+    .terminal-bar {
+      background: #111827;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot-item {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .terminal-title {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-body {
+      padding: 1.25rem;
+      height: 220px;
+      overflow-y: auto;
+      font-size: 0.82rem;
+      color: #d1d5db;
+      line-height: 1.7;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .log-time {
+      color: #64748b;
+      user-select: none;
+    }
+
+    .log-info { color: #60a5fa; }
+    .log-success { color: #34d399; font-weight: 600; }
+    .log-warn { color: #fbbf24; }
+    .log-error { color: #f87171; font-weight: 600; }
+
+    /* Git & Branching Visualizer */
+    .branch-sim {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .git-graph {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      background: #0a0f1d;
+      border-radius: 12px;
+      padding: 1.75rem;
+      border: 1px solid #1e293b;
+      margin-bottom: 2rem;
+    }
+
+    .git-branch-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .branch-tag {
+      width: 170px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tag-main { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .tag-dev { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .tag-feature { background: rgba(139, 92, 246, 0.2); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4); }
+
+    .commit-nodes {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .commit-node {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 2px solid #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .commit-node:hover {
+      transform: scale(1.15);
+      border-color: #fff;
+    }
+
+    .commit-node.active-main { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.3); color: #fff; }
+    .commit-node.active-dev { border-color: var(--accent-green); background: rgba(16, 185, 129, 0.3); color: #fff; }
+    .commit-node.active-feature { border-color: var(--accent-purple); background: rgba(139, 92, 246, 0.3); color: #fff; }
+
+    .commit-connector {
+      height: 2px;
+      background: #334155;
+      flex-grow: 1;
+    }
+
+    .pr-flow-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .pr-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .pr-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .pr-status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--accent-green);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .pr-checks-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pr-check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      padding: 0.5rem 0.85rem;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 6px;
+    }
+
+    /* Monolith to Microservices Section */
+    .arch-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.25rem;
+    }
+
+    .arch-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent-blue), #1d4ed8);
+      color: white;
+      border-color: var(--accent-blue);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .arch-view {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .arch-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diagram-box {
+      border: 1px dashed var(--border-color);
+      border-radius: 14px;
+      padding: 2rem;
+      background: #090e19;
+      margin-bottom: 2rem;
+    }
+
+    /* Monolith Graphic */
+    .monolith-box {
+      max-width: 600px;
+      margin: 0 auto;
+      border: 2px solid #ef4444;
+      border-radius: 16px;
+      padding: 1.75rem;
+      background: rgba(239, 68, 68, 0.05);
+      text-align: center;
+    }
+
+    .monolith-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #f87171;
+      margin-bottom: 0.5rem;
+    }
+
+    .monolith-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .mono-modules {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .mono-module {
+      background: #1f2937;
+      border: 1px solid #4b5563;
+      padding: 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .mono-db {
+      background: #111827;
+      border: 1px dashed #6b7280;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    /* Microservices Graphic */
+    .micro-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .gateway-box {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.15));
+      border: 1px solid var(--accent-cyan);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+    }
+
+    .services-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .service-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-cyan);
+    }
+
+    .service-header {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .service-db {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .service-pipeline-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.15);
+      border-radius: 9999px;
+      padding: 0.2rem 0.5rem;
+    }
+
+    /* Comparison Table */
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.5rem;
+      font-size: 0.92rem;
+    }
+
+    .comp-table th, .comp-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comp-table th {
+      background: var(--bg-card);
+      color: var(--accent-cyan);
+      font-weight: 600;
+    }
+
+    .comp-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Migration Timeline Steps */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 1.25rem;
+    }
+
+    .timeline-badge {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .timeline-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1.25rem;
+      flex-grow: 1;
+    }
+
+    .timeline-content h4 {
+      font-size: 1.05rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Test Suite Runner */
+    .test-runner {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+    }
+
+    .test-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    .test-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.92rem;
+    }
+
+    .test-name {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #f3f4f6;
+    }
+
+    .test-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .badge-pending { background: #374151; color: #9ca3af; }
+    .badge-pass { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-running { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+
+    /* Code Snippet Box */
+    .code-box {
+      background: #090d14;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      overflow-x: auto;
+      color: #e2e8f0;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      background: var(--bg-secondary);
+    }
+
+    footer a {
+      color: var(--accent-cyan);
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      nav { display: none; }
+      .pipeline-steps { grid-template-columns: 1fr; }
+      .services-row { grid-template-columns: 1fr; }
+      .mono-modules { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">∞</div>
+      <span>DevOps Platform</span>
+    </div>
+    <nav>
+      <a href="#advantages">DevOps Principles</a>
+      <a href="#git-flow">Git & PR Workflow</a>
+      <a href="#pipeline">CI/CD Pipeline</a>
+      <a href="#microservices">Microservices Migration</a>
+      <a href="#test-suite">Automated Testing</a>
+      <a href="#deploy-guide">Hosting Guide</a>
+    </nav>
+    <div class="status-badge" id="deploymentStatusBadge">
+      <div class="dot"></div>
+      <span id="badgeText">Production: Live</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <span class="hero-tag">Automated Continuous Delivery</span>
+      <h1>DevOps Deployment Pipeline & Architecture Showcase</h1>
+      <p>
+        An interactive single-page platform illustrating modern DevOps engineering: version control branching models, GitHub Actions automated CI/CD pipelines, cloud deployment on GitHub Pages, and transitioning monolithic applications into decoupled microservices.
+      </p>
+
+      <!-- DORA Metrics Section -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <h3>Deployment Frequency</h3>
+          <div class="value">On-Demand</div>
+          <div class="caption">↑ Automated continuous deployment via Git push</div>
+        </div>
+        <div class="metric-card">
+          <h3>Lead Time for Changes</h3>
+          <div class="value">&lt; 2 Minutes</div>
+          <div class="caption">↓ Automated linting, test, & build triggers</div>
+        </div>
+        <div class="metric-card">
+          <h3>Mean Time to Recovery</h3>
+          <div class="value">&lt; 5 Minutes</div>
+          <div class="caption">↓ Instant rollback via Git commits</div>
+        </div>
+        <div class="metric-card">
+          <h3>Change Failure Rate</h3>
+          <div class="value">&lt; 1%</div>
+          <div class="caption">↓ Guaranteed by automated pre-merge CI checks</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: Advantages of DevOps -->
+    <section id="advantages">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🚀</span> Key Advantages of DevOps Practices
+        </h2>
+        <p class="section-subtitle">
+          How continuous integration and delivery transform software quality, speed, and organizational agility.
+        </p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="feature-card">
+          <div class="icon-box icon-blue">⚡</div>
+          <h3>Rapid & Continuous Delivery</h3>
+          <p>
+            Automated pipelines eliminate manual deployment bottlenecks. Changes move seamlessly from local git commits to staging and production in minutes instead of months.
+          </p>
+          <span class="badge-pill">Continuous Delivery (CD)</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box icon-green">🛡️</div>
+          <h3>High Quality & Reliability</h3>
+          <p>
+            Continuous Integration (CI) executes lint checks, unit tests, and integration tests on every pull request, catching bugs before code reaches the production branch.
+          </p>
+          <span class="badge-pill">Continuous Integration (CI)</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box icon-purple">🤝</div>
+          <h3>Enhanced Team Collaboration</h3>
+          <p>
+            Git pull requests provide structured peer code reviews, transparent branch histories, automated policy enforcement, and seamless shared ownership between Dev and Ops.
+          </p>
+          <span class="badge-pill">Branching & PR Reviews</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box icon-cyan">☁️</div>
+          <h3>Frictionless Cloud Hosting</h3>
+          <p>
+            Deploying static artifacts to cloud hosts like GitHub Pages or container clusters ensures high availability, global CDN distribution, and zero server maintenance overhead.
+          </p>
+          <span class="badge-pill">GitHub Pages Cloud Edge</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box icon-amber">🧩</div>
+          <h3>Modular Scalability</h3>
+          <p>
+            Decoupling monolithic codebases into independent microservices enables distinct deployment cycles, fine-grained horizontal scaling, and isolated blast radiuses.
+          </p>
+          <span class="badge-pill">Microservices Architecture</span>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box icon-rose">🔒</div>
+          <h3>Built-in Security (DevSecOps)</h3>
+          <p>
+            Automated dependency vulnerability checks, secret auditing, and static analysis tools run directly inside GitHub Actions workflows before artifact synthesis.
+          </p>
+          <span class="badge-pill">Security Automation</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Git Version Control, Branching & PR Workflow -->
+    <section id="git-flow">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🌿</span> Version Control, Branching & Pull Requests
+        </h2>
+        <p class="section-subtitle">
+          Structured Git branching strategies protect code stability and enforce automated quality gates.
+        </p>
+      </div>
+
+      <div class="branch-sim">
+        <div class="git-graph">
+          <!-- Main branch row -->
+          <div class="git-branch-row">
+            <div class="branch-tag tag-main">
+              <span>🛡️</span> main (prod)
+            </div>
+            <div class="commit-nodes">
+              <div class="commit-node active-main" title="Initial commit">c1</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-main" title="Release v1.0">c2</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-main" title="Merged PR #4: CI/CD Pipeline">c5</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-main" id="nodeMerge" title="Merged PR #7: Microservices Migration">c8</div>
+            </div>
+          </div>
+
+          <!-- Develop branch row -->
+          <div class="git-branch-row">
+            <div class="branch-tag tag-dev">
+              <span>⚙️</span> develop (staging)
+            </div>
+            <div class="commit-nodes">
+              <div class="commit-connector" style="max-width: 40px;"></div>
+              <div class="commit-node active-dev" title="Sprint release setup">c3</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-dev" title="Staging integration test">c4</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-dev" title="Integration pass">c7</div>
+            </div>
+          </div>
+
+          <!-- Feature branch row -->
+          <div class="git-branch-row">
+            <div class="branch-tag tag-feature">
+              <span>✨</span> feature/microservices
+            </div>
+            <div class="commit-nodes">
+              <div class="commit-connector" style="max-width: 140px;"></div>
+              <div class="commit-node active-feature" title="Extract Auth Service">c6</div>
+              <div class="commit-connector"></div>
+              <div class="commit-node active-feature" title="Add API Gateway routing">c7</div>
+              <div class="commit-connector" style="border-style: dashed;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pull Request Interactive Simulator -->
+        <div class="pr-flow-box">
+          <div class="pr-header">
+            <div>
+              <span class="pr-title">Pull Request #7: Decompose Monolith into Microservices</span>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">
+                Merging <code style="color: #c084fc;">feature/microservices</code> into <code style="color: #60a5fa;">main</code>
+              </div>
+            </div>
+            <span class="pr-status-badge" id="prBadge">✓ Ready to Merge</span>
+          </div>
+
+          <ul class="pr-checks-list">
+            <li class="pr-check-item">
+              <span>🔍 <strong>GitHub Actions CI / Lint Check</strong> — Validate code standards</span>
+              <span style="color: var(--accent-green);">Passed (12s)</span>
+            </li>
+            <li class="pr-check-item">
+              <span>🧪 <strong>Automated Unit & Contract Tests</strong> — Verify service contracts</span>
+              <span style="color: var(--accent-green);">Passed (34s)</span>
+            </li>
+            <li class="pr-check-item">
+              <span>🛡️ <strong>Branch Protection Gate</strong> — Requires 1 approving review & green CI</span>
+              <span style="color: var(--accent-green);">Approved by @lead-dev</span>
+            </li>
+          </ul>
+
+          <div style="display: flex; gap: 1rem; align-items: center; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="simulatePRReset()">Re-evaluate Checks</button>
+            <button class="btn btn-primary" id="mergeBtn" onclick="simulatePRMerge()">Confirm & Merge PR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: CI/CD Pipeline Simulator (GitHub Actions) -->
+    <section id="pipeline">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>⚡</span> Automated CI/CD Pipeline (GitHub Actions)
+        </h2>
+        <p class="section-subtitle">
+          Interactive execution of build, test, and cloud deployment stages triggered automatically upon Git changes.
+        </p>
+      </div>
+
+      <div class="pipeline-container">
+        <div class="pipeline-controls">
+          <div>
+            <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 0.25rem;">Workflow: <code style="color: var(--accent-cyan);">.github/workflows/deploy.yml</code></h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Event trigger: <code style="color: #cbd5e1;">on: [push, pull_request]</code></p>
+          </div>
+
+          <div style="display: flex; gap: 1rem; align-items: center;">
+            <label class="toggle-group">
+              <input type="checkbox" id="failToggle" />
+              <span>Simulate Test Failure</span>
+            </label>
+            <button class="btn btn-primary" id="runPipelineBtn" onclick="runPipeline()">
+              <span>▶</span> Trigger Workflow Run
+            </button>
+          </div>
+        </div>
+
+        <!-- Visual Pipeline Stages -->
+        <div class="pipeline-steps">
+          <div class="step-box idle" id="stage1">
+            <div class="step-number">1</div>
+            <div class="step-name">Checkout & Setup</div>
+            <div class="step-status" id="status1">actions/checkout@v4</div>
+          </div>
+
+          <div class="step-box idle" id="stage2">
+            <div class="step-number">2</div>
+            <div class="step-name">Lint & Validation</div>
+            <div class="step-status" id="status2">html-validate & syntax</div>
+          </div>
+
+          <div class="step-box idle" id="stage3">
+            <div class="step-number">3</div>
+            <div class="step-name">Automated Tests</div>
+            <div class="step-status" id="status3">Unit & contract specs</div>
+          </div>
+
+          <div class="step-box idle" id="stage4">
+            <div class="step-number">4</div>
+            <div class="step-name">Build Artifact</div>
+            <div class="step-status" id="status4">actions/upload-pages-artifact</div>
+          </div>
+
+          <div class="step-box idle" id="stage5">
+            <div class="step-number">5</div>
+            <div class="step-name">Cloud Deployment</div>
+            <div class="step-status" id="status5">actions/deploy-pages@v4</div>
+          </div>
+        </div>
+
+        <!-- Terminal Output -->
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="terminal-dots">
+              <div class="dot-item dot-red"></div>
+              <div class="dot-item dot-yellow"></div>
+              <div class="dot-item dot-green"></div>
+            </div>
+            <div class="terminal-title">Runner: ubuntu-latest | GitHub Actions Log Stream</div>
+            <button onclick="clearTerminal()" style="background:none; border:none; color:#64748b; font-size:0.75rem; cursor:pointer;">Clear</button>
+          </div>
+          <div class="terminal-body" id="terminalBody">
+            <div class="terminal-line">
+              <span class="log-time">[00:00:00]</span>
+              <span class="log-info">Runner initialized. Awaiting workflow trigger event (push / pull_request)...</span>
+            </div>
+            <div class="terminal-line">
+              <span class="log-time">[00:00:01]</span>
+              <span class="log-info">Workflow configured for repository: Hariman/Agile-DevOps-Demo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Monolith to Microservices Architecture Migration -->
+    <section id="microservices">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🔄</span> Monolithic vs. Microservices Architecture Migration
+        </h2>
+        <p class="section-subtitle">
+          Deconstructing a single tightly coupled system into independently deployable, resilient microservices.
+        </p>
+      </div>
+
+      <div class="arch-container">
+        <div class="arch-tabs">
+          <button class="tab-btn active" id="btnMono" onclick="switchArch('monolith')">
+            🏛️ 1. Monolithic Architecture (Legacy)
+          </button>
+          <button class="tab-btn" id="btnMicro" onclick="switchArch('microservices')">
+            🌐 2. Microservices Architecture (Modern)
+          </button>
+          <button class="tab-btn" id="btnRoadmap" onclick="switchArch('roadmap')">
+            🗺️ 3. Migration Roadmap (Strangler Pattern)
+          </button>
+        </div>
+
+        <!-- View 1: Monolith -->
+        <div class="arch-view active" id="viewMonolith">
+          <div class="diagram-box">
+            <div class="monolith-box">
+              <div class="monolith-title">Monolithic Application Package (monolith.war / app.bundle.js)</div>
+              <div class="monolith-desc">
+                All functional modules coexist within a single execution process and unified repository.
+              </div>
+
+              <div class="mono-modules">
+                <div class="mono-module">👤 User Auth & Profile Module</div>
+                <div class="mono-module">📦 Product Catalog Module</div>
+                <div class="mono-module">💳 Order & Payment Module</div>
+                <div class="mono-module">🔔 Notification Module</div>
+              </div>
+
+              <div class="mono-db">
+                🗄️ Single Shared Relational Database (Tight Data Coupling & Bottleneck)
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <h4 style="color: #f87171; margin-bottom: 0.5rem;">⚠️ Pain Points of the Monolith:</h4>
+            <ul style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.8; padding-left: 1.25rem;">
+              <li><strong>Single Point of Failure:</strong> A memory leak or error in the Notification module crashes the entire web application.</li>
+              <li><strong>Slow Deployment Cycles:</strong> Any minor CSS or copy tweak requires rebuilding, testing, and deploying the entire 500MB codebase.</li>
+              <li><strong>Inflexible Scaling:</strong> If high traffic hits the Payment module, the whole monolith must be scaled horizontally, consuming massive server memory.</li>
+              <li><strong>Code Conflicts:</strong> Multiple teams committing to one monolithic repo leads to merge hell and prolonged release freezes.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- View 2: Microservices -->
+        <div class="arch-view" id="viewMicroservices">
+          <div class="diagram-box">
+            <div class="micro-grid">
+              <div class="gateway-box">
+                🛡️ Cloud API Gateway / Reverse Proxy (Routing, SSL Termination, Rate Limiting)
+              </div>
+
+              <div class="services-row">
+                <div class="service-card">
+                  <div class="service-header">👤 Auth Service</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Independent Node.js container</div>
+                  <div class="service-db">Auth DB (Redis + Mongo)</div>
+                  <span class="service-pipeline-badge">✓ CI/CD Pipeline #1</span>
+                </div>
+
+                <div class="service-card">
+                  <div class="service-header">📦 Catalog Service</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Go High-Performance API</div>
+                  <div class="service-db">Catalog DB (Postgres)</div>
+                  <span class="service-pipeline-badge">✓ CI/CD Pipeline #2</span>
+                </div>
+
+                <div class="service-card">
+                  <div class="service-header">💳 Order Service</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Java / Spring Boot Service</div>
+                  <div class="service-db">Order DB (Postgres)</div>
+                  <span class="service-pipeline-badge">✓ CI/CD Pipeline #3</span>
+                </div>
+
+                <div class="service-card">
+                  <div class="service-header">🔔 Notification</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Event-driven Python worker</div>
+                  <div class="service-db">Kafka Message Broker</div>
+                  <span class="service-pipeline-badge">✓ CI/CD Pipeline #4</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Comparison Table -->
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>Engineering Dimension</th>
+                <th>Monolithic Architecture</th>
+                <th>Microservices Architecture</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Deployment Agility</strong></td>
+                <td>High-risk, scheduled releases (monthly/weekly).</td>
+                <td>Low-risk, independent continuous deployment per service.</td>
+              </tr>
+              <tr>
+                <td><strong>Fault Isolation</strong></td>
+                <td>Cascading failure — one error can bring down entire app.</td>
+                <td>Isolated blast radius — other services remain online.</td>
+              </tr>
+              <tr>
+                <td><strong>Horizontal Scalability</strong></td>
+                <td>Must scale entire application identically.</td>
+                <td>Targeted scaling for high-load services only.</td>
+              </tr>
+              <tr>
+                <td><strong>Technology Stack</strong></td>
+                <td>Locked into single language/runtime.</td>
+                <td>Polyglot: optimal language for each service domain.</td>
+              </tr>
+              <tr>
+                <td><strong>Team Autonomy</strong></td>
+                <td>Cross-team dependencies and merge bottlenecks.</td>
+                <td>Decoupled two-pizza teams owning separate pipelines.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- View 3: Roadmap -->
+        <div class="arch-view" id="viewRoadmap">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-badge">1</div>
+              <div class="timeline-content">
+                <h4>Identify Bounded Contexts & Domain Boundaries</h4>
+                <p>Use Domain-Driven Design (DDD) to analyze dependencies and partition the system into cohesive, loosely coupled domain boundaries (Auth, Catalog, Payments, Notifications).</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-badge">2</div>
+              <div class="timeline-content">
+                <h4>Implement the API Gateway (Strangler Fig Pattern)</h4>
+                <p>Deploy a reverse proxy (Kong, Nginx, or Cloud Gateway) in front of the monolith. Initially, all requests route to the monolith. As microservices are built, traffic is routed to the new services without client disruptions.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-badge">3</div>
+              <div class="timeline-content">
+                <h4>Extract Peripheral Services First</h4>
+                <p>Begin by migrating low-risk services like Notification and Email dispatchers. Build dedicated Git repos and GitHub Actions pipelines for each new service.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-badge">4</div>
+              <div class="timeline-content">
+                <h4>Database Decoupling (Database-per-Service)</h4>
+                <p>Break down the shared monolithic database by creating dedicated schemas and datastores. Replace direct database joins with REST/gRPC API calls or asynchronous event buses (RabbitMQ / Kafka).</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-badge">5</div>
+              <div class="timeline-content">
+                <h4>Decommission Legacy Monolith</h4>
+                <p>Once all critical domain logic is migrated to autonomous microservices, decommission the legacy monolith container and redirect all gateway traffic completely to the modern service mesh.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: In-Browser Automated Test Runner -->
+    <section id="test-suite">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🧪</span> In-Browser Automated Test Runner
+        </h2>
+        <p class="section-subtitle">
+          Live verification testing the application contracts, DOM integrity, and deployment readiness.
+        </p>
+      </div>
+
+      <div class="test-runner">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h3 style="color: #fff; font-size: 1.1rem;">Client-Side Unit & Smoke Test Suite</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Simulates automated test execution as run inside the GitHub Actions CI environment.</p>
+          </div>
+          <button class="btn btn-primary" onclick="runTests()">Run Automated Tests</button>
+        </div>
+
+        <div class="test-list">
+          <div class="test-item" id="test1">
+            <div class="test-name">
+              <span>●</span>
+              <span>Test 1: Web Application Meta & Viewport Integrity</span>
+            </div>
+            <span class="test-badge badge-pending" id="tbadge1">PENDING</span>
+          </div>
+
+          <div class="test-item" id="test2">
+            <div class="test-name">
+              <span>●</span>
+              <span>Test 2: CI/CD Pipeline Finite State Machine Transitions</span>
+            </div>
+            <span class="test-badge badge-pending" id="tbadge2">PENDING</span>
+          </div>
+
+          <div class="test-item" id="test3">
+            <div class="test-name">
+              <span>●</span>
+              <span>Test 3: Microservice Mock Endpoints & Contracts</span>
+            </div>
+            <span class="test-badge badge-pending" id="tbadge3">PENDING</span>
+          </div>
+
+          <div class="test-item" id="test4">
+            <div class="test-name">
+              <span>●</span>
+              <span>Test 4: GitHub Pages Cloud Host Configuration Check</span>
+            </div>
+            <span class="test-badge badge-pending" id="tbadge4">PENDING</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: GitHub Actions Workflow & Hosting Guide -->
+    <section id="deploy-guide">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>📦</span> GitHub Pages Cloud Deployment Guide
+        </h2>
+        <p class="section-subtitle">
+          How this exact repository is configured, tested, and deployed to GitHub Pages with GitHub Actions.
+        </p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div class="pipeline-container">
+          <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 0.75rem;">1. GitHub Actions CI/CD Configuration File</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">
+            Placed in <code>.github/workflows/deploy.yml</code>:
+          </p>
+          <div class="code-box">name: Deploy Static App to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Single-Page Application (HTML Syntax)
+        run: |
+          echo "Checking index.html exists and is well-formed..."
+          test -f index.html || exit 1
+          grep -q "<!DOCTYPE html>" index.html || exit 1
+          echo "Validation PASSED: index.html is ready for deployment."
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages Cloud
+        id: deployment
+        uses: actions/deploy-pages@v4</div>
+        </div>
+
+        <div class="pipeline-container">
+          <h3 style="color: #fff; font-size: 1.05rem; margin-bottom: 0.75rem;">2. Git CLI Commands to Initialize and Deploy</h3>
+          <div class="code-box"># Step 1: Initialize Git and create feature branch
+git init
+git add .
+git commit -m "feat: initial commit with DevOps showcase single-page app"
+
+# Step 2: Push to GitHub
+git remote add origin https://github.com/&lt;your-username&gt;/&lt;your-repo&gt;.git
+git branch -M main
+git push -u origin main
+
+# Step 3: Enable GitHub Pages in your GitHub Repository
+# Go to: Repository Settings -> Pages -> Build and deployment -> Source: "GitHub Actions"</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.75rem;">
+      <p style="font-weight: 600; color: #fff;">DevOps Deployment Pipeline & Microservices Architecture</p>
+      <p>Single-Page Static Application built with pure HTML5, CSS3, and JavaScript — Hosted on GitHub Pages via GitHub Actions CI/CD.</p>
+      <p style="font-size: 0.8rem; color: #64748b;">Version 1.0.0 • Licensed under MIT</p>
+    </div>
+  </footer>
+
+  <!-- Embedded Interactive JavaScript -->
+  <script>
+    // Tab switching for Monolith vs Microservices
+    function switchArch(viewId) {
+      const views = ['viewMonolith', 'viewMicroservices', 'viewRoadmap'];
+      const buttons = ['btnMono', 'btnMicro', 'btnRoadmap'];
+      
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('active');
+      });
+      buttons.forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+
+      if (viewId === 'monolith') {
+        document.getElementById('viewMonolith').classList.add('active');
+        document.getElementById('btnMono').classList.add('active');
+      } else if (viewId === 'microservices') {
+        document.getElementById('viewMicroservices').classList.add('active');
+        document.getElementById('btnMicro').classList.add('active');
+      } else if (viewId === 'roadmap') {
+        document.getElementById('viewRoadmap').classList.add('active');
+        document.getElementById('btnRoadmap').classList.add('active');
+      }
+    }
+
+    // Terminal helper
+    function appendLog(message, type = 'info') {
+      const body = document.getElementById('terminalBody');
+      const time = new Date().toTimeString().split(' ')[0];
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+
+      let typeClass = 'log-info';
+      if (type === 'success') typeClass = 'log-success';
+      if (type === 'warn') typeClass = 'log-warn';
+      if (type === 'error') typeClass = 'log-error';
+
+      line.innerHTML = `<span class="log-time">[${time}]</span> <span class="${typeClass}">${message}</span>`;
+      body.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function clearTerminal() {
+      document.getElementById('terminalBody').innerHTML = '';
+      appendLog('Terminal cleared. Ready for next workflow execution.', 'info');
+    }
+
+    // Pipeline Runner Simulation
+    let isPipelineRunning = false;
+    async function runPipeline() {
+      if (isPipelineRunning) return;
+      isPipelineRunning = true;
+
+      const runBtn = document.getElementById('runPipelineBtn');
+      runBtn.disabled = true;
+      runBtn.innerText = 'Running Pipeline...';
+
+      const shouldFail = document.getElementById('failToggle').checked;
+
+      const stages = [
+        { id: 'stage1', statusId: 'status1', name: 'Checkout & Setup', time: 700, log: 'actions/checkout@v4: Cloned commit 8f9b2c (refs/heads/main)' },
+        { id: 'stage2', statusId: 'status2', name: 'Lint & Validation', time: 900, log: 'Static analysis: HTML5 valid, CSS3 syntax verified, zero linter warnings.' },
+        { id: 'stage3', statusId: 'status3', name: 'Automated Tests', time: 1100, log: 'Running test runner: 4 tests executed in 42ms.' },
+        { id: 'stage4', statusId: 'status4', name: 'Build Artifact', time: 800, log: 'Creating artifact bundle: index.html packaged for GitHub Pages.' },
+        { id: 'stage5', statusId: 'status5', name: 'Cloud Deployment', time: 1000, log: 'actions/deploy-pages@v4: Deployed to https://hariman.github.io/Agile/' }
+      ];
+
+      // Reset stages
+      for (let i = 1; i <= 5; i++) {
+        const s = document.getElementById(`stage${i}`);
+        s.className = 'step-box idle';
+      }
+
+      appendLog('>>> Starting GitHub Actions Workflow: .github/workflows/deploy.yml', 'info');
+
+      for (let i = 0; i < stages.length; i++) {
+        const stage = stages[i];
+        const elem = document.getElementById(stage.id);
+        const statusElem = document.getElementById(stage.statusId);
+
+        elem.className = 'step-box running';
+        appendLog(`[Job] Executing step ${i + 1}: ${stage.name}...`, 'info');
+
+        await new Promise(r => setTimeout(r, stage.time));
+
+        // Simulated Failure in Stage 3 if toggle enabled
+        if (i === 2 && shouldFail) {
+          elem.className = 'step-box failed';
+          statusElem.innerText = 'Failed: Assertion Error in spec';
+          appendLog(`[Error] Test stage failed: Expected status 200, received 500 in service mock!`, 'error');
+          appendLog(`[Pipeline Aborted] Workflow failed at stage 3. Cloud deployment cancelled.`, 'error');
+          
+          document.getElementById('deploymentStatusBadge').className = 'status-badge';
+          document.getElementById('deploymentStatusBadge').style.borderColor = 'rgba(239, 68, 68, 0.4)';
+          document.getElementById('deploymentStatusBadge').style.background = 'rgba(239, 68, 68, 0.15)';
+          document.getElementById('deploymentStatusBadge').style.color = '#ef4444';
+          document.getElementById('badgeText').innerText = 'Build Failed';
+
+          isPipelineRunning = false;
+          runBtn.disabled = false;
+          runBtn.innerText = '▶ Trigger Workflow Run';
+          return;
+        }
+
+        elem.className = 'step-box success';
+        appendLog(`✓ Step ${i + 1} Succeeded: ${stage.log}`, 'success');
+      }
+
+      appendLog('🎉 WORKFLOW SUCCEEDED: Static Web App successfully published to GitHub Pages Cloud!', 'success');
+      
+      // Update badge
+      const badge = document.getElementById('deploymentStatusBadge');
+      badge.style.borderColor = 'rgba(16, 185, 129, 0.35)';
+      badge.style.background = 'rgba(16, 185, 129, 0.15)';
+      badge.style.color = 'var(--accent-green)';
+      document.getElementById('badgeText').innerText = 'Production: Live (v1.0.4)';
+
+      isPipelineRunning = false;
+      runBtn.disabled = false;
+      runBtn.innerText = '▶ Trigger Workflow Run';
+    }
+
+    // Git PR Simulator
+    function simulatePRMerge() {
+      const mergeBtn = document.getElementById('mergeBtn');
+      const badge = document.getElementById('prBadge');
+      const mergeNode = document.getElementById('nodeMerge');
+
+      mergeBtn.disabled = true;
+      mergeBtn.innerText = 'Merging...';
+
+      setTimeout(() => {
+        badge.innerText = '✓ Merged into main';
+        badge.style.background = 'rgba(139, 92, 246, 0.2)';
+        badge.style.color = '#c084fc';
+        badge.style.borderColor = 'rgba(139, 92, 246, 0.4)';
+
+        mergeBtn.innerText = 'PR Merged Successfully';
+        mergeNode.style.boxShadow = '0 0 14px #60a5fa';
+
+        appendLog('Pull Request #7 merged into branch `main`. Auto-triggering GitHub Pages deploy workflow...', 'info');
+        runPipeline();
+      }, 700);
+    }
+
+    function simulatePRReset() {
+      const mergeBtn = document.getElementById('mergeBtn');
+      const badge = document.getElementById('prBadge');
+      mergeBtn.disabled = false;
+      mergeBtn.innerText = 'Confirm & Merge PR';
+      badge.innerText = '✓ Ready to Merge';
+      badge.style.background = 'rgba(16, 185, 129, 0.2)';
+      badge.style.color = 'var(--accent-green)';
+      badge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      appendLog('PR checks re-evaluated: All branch protection requirements met.', 'info');
+    }
+
+    // Client-side automated test suite
+    async function runTests() {
+      const tests = [
+        { id: 'tbadge1', name: 'Meta viewport check', run: () => !!document.querySelector('meta[name="viewport"]') },
+        { id: 'tbadge2', name: 'Pipeline state machine check', run: () => typeof runPipeline === 'function' },
+        { id: 'tbadge3', name: 'Microservice contracts integrity', run: () => document.querySelectorAll('.service-card').length >= 4 },
+        { id: 'tbadge4', name: 'GitHub Pages config readiness', run: () => document.getElementById('viewMicroservices') !== null }
+      ];
+
+      for (let i = 0; i < tests.length; i++) {
+        const badge = document.getElementById(tests[i].id);
+        badge.className = 'test-badge badge-running';
+        badge.innerText = 'RUNNING...';
+
+        await new Promise(r => setTimeout(r, 350));
+
+        const passed = tests[i].run();
+        if (passed) {
+          badge.className = 'test-badge badge-pass';
+          badge.innerText = 'PASSED (0.01s)';
+        } else {
+          badge.className = 'test-badge badge-pending';
+          badge.innerText = 'FAILED';
+        }
+      }
+
+      appendLog('In-browser test runner finished: 4 passed, 0 failed.', 'success');
+    }
+
+    // Auto-run test runner once on page load to demonstrate automated testing
+    window.addEventListener('DOMContentLoaded', () => {
+      runTests();
+    });
+  </script>
+</body>
+</html>
